@@ -16,7 +16,11 @@
 }
 
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   background: var(--color-bg);
   color: var(--color-text);
   line-height: 1.6;
@@ -106,7 +110,9 @@ body {
   font-size: 1rem;
   font-family: inherit;
   resize: vertical;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .query-input:focus {
@@ -144,14 +150,20 @@ body {
   align-items: center;
   gap: 8px;
   padding: 8px 20px;
-  background: linear-gradient(135deg, var(--color-accent), var(--color-accent-dark));
+  background: linear-gradient(
+    135deg,
+    var(--color-accent),
+    var(--color-accent-dark)
+  );
   color: white;
   border: none;
   border-radius: var(--radius);
   font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.15s, box-shadow 0.15s;
+  transition:
+    transform 0.15s,
+    box-shadow 0.15s;
   box-shadow: 0 2px 8px rgba(0, 229, 164, 0.25);
   align-self: flex-end;
   height: 38px;
