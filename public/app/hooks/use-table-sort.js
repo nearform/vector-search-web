@@ -6,8 +6,7 @@ const SORT_DIRS = {
   DESC: "desc",
 };
 
-const sortIconHtml = (className) =>
-  html`<i className="ph ${className}"></i>`;
+const sortIconHtml = (className) => html`<i className="ph ${className}"></i>`;
 
 const SORT_CHARS = {
   [SORT_DIRS.ASC]: sortIconHtml("ph-sort-ascending"),

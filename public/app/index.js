@@ -8,25 +8,38 @@ import {
   SubmitButton,
 } from "./components/forms.js";
 import { PostsTable } from "./components/posts-table.js";
-import { DUMMY_POSTS } from "./data/dummy-posts.js";
+import { search } from "./data/index.js";
 
 export const App = () => {
-  const [posts, setPosts] = useState(DUMMY_POSTS);
+  const [posts, setPosts] = useState([]);
   const [selectedPostTypes, setSelectedPostTypes] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [minDate, setMinDate] = useState("");
   const [isFetching, setIsFetching] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const { query } = getElements(event);
 
-    console.log("TODO: Implement Search", {
-      query,
-      postTypes: selectedPostTypes.map(({ value }) => value),
-      categories: selectedCategories.map(({ value }) => value),
-      minDate,
-    });
+    if (!query?.trim()) {
+      return;
+    }
+
+    setIsFetching(true);
+    try {
+      const result = await search({
+        query,
+        postType: selectedPostTypes.map(({ value }) => value),
+        categoryPrimary: selectedCategories.map(({ value }) => value),
+        minDate,
+      });
+      setPosts(result.posts);
+    } catch (err) {
+      // TODO(CLEANUP): Use a proper UI error for user.
+      console.error("Search failed:", err); // eslint-disable-line no-undef
+    } finally {
+      setIsFetching(false);
+    }
   };
 
   return html`
