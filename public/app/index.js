@@ -35,6 +35,7 @@ export const App = () => {
       });
       setPosts(result.posts);
     } catch (err) {
+      // TODO(CLEANUP): Use a proper UI error for user.
       console.error("Search failed:", err); // eslint-disable-line no-undef
     } finally {
       setIsFetching(false);

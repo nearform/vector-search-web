@@ -70,6 +70,7 @@
         getChunksDb,
       } from "./app/data/index.js";
 
+      // TODO(CLEANUP): Add a loading wrapper AND handle errors.
       // Preload data and model in parallel (fire and forget)
       // These cache their results, so first search will be fast
       getPosts();

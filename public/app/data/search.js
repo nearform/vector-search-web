@@ -36,6 +36,10 @@ export const getChunksDb = getAndCache(async () => {
   // Dequantize embeddings from uint8 back to floats for Orama vector search
   const chunks = Object.entries(embeddingsObj).flatMap(([slug, { chunks }]) => {
     const post = postsObj[slug];
+    if (!post) {
+      throw new Error(`No post found for slug: ${slug}`);
+    }
+
     return chunks.map((chunk) => ({
       slug,
       date: dateToNumber(post?.date),
@@ -86,13 +90,13 @@ export const search = async ({ query, postType, minDate, categoryPrimary }) => {
   const chunksData = await getPostsEmbeddings();
 
   // Generate query embedding
-  const start = performance.now();
+  const startTime = performance.now();
   const queryExtracted = await extractor(query, {
     pooling: "mean",
     normalize: true,
   });
   const queryEmbedding = Array.from(queryExtracted.data);
-  const embeddingTime = performance.now() - start;
+  const embeddingTime = performance.now() - startTime;
 
   // Build where clause for filtering
   const where = {};
@@ -114,7 +118,7 @@ export const search = async ({ query, postType, minDate, categoryPrimary }) => {
     similarity: MIN_SIMILARITY,
     where: Object.keys(where).length > 0 ? where : undefined,
   });
-  const searchTime = performance.now() - start;
+  const searchTime = performance.now() - startTime;
 
   // Build posts map and chunks array
   const postsMap = {};
