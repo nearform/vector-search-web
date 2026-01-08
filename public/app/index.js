@@ -62,8 +62,8 @@ export const App = () => {
               setSelected=${setSelectedCategories}
             />
             <${MinDateInput} value=${minDate} setValue=${setMinDate} />
+            <${SubmitButton} isFetching=${isFetching} />
           </div>
-          <${SubmitButton} isFetching=${isFetching} />
         </form>
       </section>
 
