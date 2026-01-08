@@ -24,7 +24,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
     <link
@@ -37,24 +37,12 @@
       type="text/css"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/grids-responsive-min.css"
-    />
     <link rel="stylesheet" href="./styles.css" />
     <title>Vector Search Web Demo</title>
   </head>
   <body>
     <div id="root"></div>
 
-    <!-- TODO(CLEANUP) NEEDED?
-
-          "llm-splitter": "https://esm.sh/llm-splitter@0.2.0?dev",
-    -->
     <script type="importmap">
       {
         "imports": {
@@ -71,27 +59,14 @@
       }
     </script>
     <script type="module">
-      // Get raw data from GitHub.
-      const ghBlobUrl =
-        "https://raw.githubusercontent.com/nearform/joyce/6ef974b3446352afb5782b881cbd5f527f37b511/public/data";
-      const fetchJson = async (url) => (await fetch(url)).json();
+      import { createRoot } from "react-dom/client";
+      import { createElement } from "react";
+      import htm from "htm";
+      import { App } from "./app/index.js";
 
-      const posts = await fetchJson(`${ghBlobUrl}/posts.json`);
-      const postsEmbeddings256 = await fetchJson(
-        `${ghBlobUrl}/posts-embeddings-256.json`,
-      );
-      const postsEmbeddings512 = await fetchJson(
-        `${ghBlobUrl}/posts-embeddings-512.json`,
-      );
-
-      console.log("TODO: HERE", {
-        posts,
-        postsEmbeddings256,
-        postsEmbeddings512,
-      });
-
-      document.querySelector("#root").innerHTML =
-        "TODO: Add vector search web demo";
+      const html = htm.bind(createElement);
+      const root = createRoot(document.getElementById("root"));
+      root.render(html`<${App} />`);
     </script>
   </body>
 </html>

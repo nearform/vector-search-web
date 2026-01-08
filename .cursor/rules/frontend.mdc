@@ -6,6 +6,12 @@ alwaysApply: false
 
 # Frontend Development Guidelines
 
+## Local Development
+
+- Development server URL: http://localhost:4600/public/
+- The dev server is already running during development - navigate directly to test
+- Start with `npx serve -l 4600` from the project root if needed
+
 ## Core Philosophy
 
 The frontend of this project uses modern web development without build tools. All code should run directly in the browser using native ES modules and modern JavaScript features.
