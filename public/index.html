@@ -71,6 +71,25 @@
       }
     </script>
     <script type="module">
+      // Get raw data from GitHub.
+      const ghBlobUrl =
+        "https://raw.githubusercontent.com/nearform/joyce/6ef974b3446352afb5782b881cbd5f527f37b511/public/data";
+      const fetchJson = async (url) => (await fetch(url)).json();
+
+      const posts = await fetchJson(`${ghBlobUrl}/posts.json`);
+      const postsEmbeddings256 = await fetchJson(
+        `${ghBlobUrl}/posts-embeddings-256.json`,
+      );
+      const postsEmbeddings512 = await fetchJson(
+        `${ghBlobUrl}/posts-embeddings-512.json`,
+      );
+
+      console.log("TODO: HERE", {
+        posts,
+        postsEmbeddings256,
+        postsEmbeddings512,
+      });
+
       document.querySelector("#root").innerHTML =
         "TODO: Add vector search web demo";
     </script>

@@ -1,0 +1,87 @@
+---
+description: Guidelines for data code
+globs: public/**/*.js
+alwaysApply: false
+---
+
+<!-- TODO(CURSOR): update globs, no alwaysApply -->
+
+# Data Development Guidelines
+
+## Core Philosophy
+
+This is a pure JavaScript, web browser-only app.
+- All data is served / imported as part of a static app.
+- That means all of our tools are in-browser tools.
+- There is no remote backend, and our use of data should be available offline. (The only exception to this is fetching embedding or chat models and storing locally).
+
+## Data
+
+### Data Source
+
+Data is fetched at runtime from a static GitHub raw blob URL pointing to the Joyce project:
+
+```js
+const ghBlobUrl = "https://raw.githubusercontent.com/nearform/joyce/<commit>/public/data";
+const posts = await fetchJson(`${ghBlobUrl}/posts.json`);
+const postsEmbeddings256 = await fetchJson(`${ghBlobUrl}/posts-embeddings-256.json`);
+const postsEmbeddings512 = await fetchJson(`${ghBlobUrl}/posts-embeddings-512.json`);
+```
+
+| File | Description |
+|------|-------------|
+| `posts.json` | Source blog post metadata and content |
+| `posts-embeddings-256.json` | Pre-computed embeddings with 256 token chunks |
+| `posts-embeddings-512.json` | Pre-computed embeddings with 512 token chunks |
+
+### posts.json Schema
+
+Object keyed by post slug. Each post has the following fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `href` | `string` | Full URL to the original blog post |
+| `postType` | `string` | Type of post (e.g., `"blog"`) |
+| `slug` | `string` | URL-friendly identifier (matches object key) |
+| `date` | `string` | Publication date in `YYYY-MM-DD` format |
+| `title` | `string` | Post title |
+| `authors` | `string[]` | Array of author names |
+| `categories` | `object` | `{ primary: string, others: string[] }` |
+| `content` | `string[]` | Array of text content paragraphs |
+
+### Embeddings Schema
+
+Object keyed by post slug (matching `posts.json` keys). Each entry has a `chunks` array where each chunk contains:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `start` | `number` | Start character offset into concatenated content |
+| `end` | `number` | End character offset into concatenated content |
+| `embeddingNumTokens` | `number` | Number of tokens in this chunk |
+| `embeddings` | `object` | `{ values: number[], min: number, max: number }` |
+
+### Key Points
+
+- The `256` vs `512` in filenames refers to the **chunk token size**, not embedding dimensions
+- All embeddings are **384 dimensions** (from `Xenova/gte-small` model)
+- Embeddings are **quantized to uint8** with `min`/`max` values for dequantization back to float vectors (reduces file size)
+- Dequantize formula: `float_value = (uint8_value / 255) * (max - min) + min`
+
+## Database
+
+We use [Orama](https://docs.oramasearch.com/docs/orama-js) for all database and search functionality. Orama is a full-text search engine that runs entirely in the browser, which aligns with our browser-only architecture.
+
+### Orama Databases
+Two databases are created at runtime:
+- **postsDb** — Full-text search on post metadata (title, authors, categories, etc.)
+- **chunksDb** — Vector search using 384-dimension embeddings from `gte-small`
+
+### Key Points
+- All database operations happen client-side using Orama JS
+- No backend database server required - everything runs in the browser
+- Search indexes are built and maintained in-memory
+- Refer to the [Orama JS documentation](https://docs.oramasearch.com/docs/orama-js) for API details and usage patterns
+
+## Embeddings
+
+Query embeddings are generated using [@xenova/transformers](https://huggingface.co/docs/transformers.js) with the `Xenova/gte-small` model (384 dimensions, max 512 tokens).
