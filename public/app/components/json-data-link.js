@@ -8,12 +8,13 @@ export const JsonDataLink = ({ data }) => {
   const handleOpen = () => openTextInNewWindow(JSON.stringify(data, null, 2));
 
   return html`
-    <span
+    <button
+      type="button"
       onClick=${handleOpen}
       title="View raw search data"
       className="json-data-link"
     >
       <i className="ph ph-brackets-curly"></i>
-    </span>
+    </button>
   `;
 };
