@@ -332,6 +332,24 @@ body {
   text-align: center;
 }
 
+/* JSON Data Link */
+.json-data-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: color 0.15s;
+}
+
+.json-data-link:hover {
+  color: var(--color-accent-dark);
+}
+
+.json-data-link i {
+  font-size: 1.1rem;
+}
+
 /* Category Label */
 .category-label {
   display: inline-block;

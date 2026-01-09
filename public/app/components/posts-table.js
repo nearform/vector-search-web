@@ -1,5 +1,6 @@
 import { html } from "../util/html.js";
 import { Category } from "./category.js";
+import { JsonDataLink } from "./json-data-link.js";
 import { useTableSort } from "../hooks/use-table-sort.js";
 
 const HEADINGS = {
@@ -9,7 +10,7 @@ const HEADINGS = {
   "categories.primary": "Category",
 };
 
-export const PostsTable = ({ posts = [] }) => {
+export const PostsTable = ({ posts = [], searchData = null }) => {
   const { getSortSymbol, handleColumnSort, sortItems } = useTableSort();
 
   if (posts.length === 0) {
@@ -21,6 +22,7 @@ export const PostsTable = ({ posts = [] }) => {
       <div className="results-header">
         <h2>Results</h2>
         <span className="results-count">${posts.length} posts found</span>
+        <${JsonDataLink} data=${searchData} />
       </div>
       <div className="table-container">
         <table className="posts-table">

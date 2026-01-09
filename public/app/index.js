@@ -11,6 +11,7 @@ import { PostsTable } from "./components/posts-table.js";
 import { search } from "./data/index.js";
 
 export const App = () => {
+  const [searchData, setSearchData] = useState(null);
   const [posts, setPosts] = useState([]);
   const [selectedPostTypes, setSelectedPostTypes] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -26,6 +27,8 @@ export const App = () => {
     }
 
     setIsFetching(true);
+    setSearchData(null);
+    setPosts([]);
     try {
       const result = await search({
         query,
@@ -33,6 +36,7 @@ export const App = () => {
         categoryPrimary: selectedCategories.map(({ value }) => value),
         minDate,
       });
+      setSearchData(result);
       setPosts(result.posts);
     } catch (err) {
       // TODO(CLEANUP): Use a proper UI error for user.
@@ -79,7 +83,7 @@ export const App = () => {
         </form>
       </section>
 
-      <${PostsTable} posts=${posts} />
+      <${PostsTable} posts=${posts} searchData=${searchData} />
 
       <footer className="footer">
         <a
