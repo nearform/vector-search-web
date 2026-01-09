@@ -57,12 +57,59 @@ body {
   font-size: 1.1rem;
 }
 
-.badges {
-  margin-top: 16px;
+.subtitle-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
 
-.badges img {
-  height: 20px;
+.github-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-border);
+  border-radius: 50%;
+  font-size: 1.2rem;
+  color: var(--color-text);
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.github-link:hover {
+  background: var(--color-accent);
+  color: white;
+}
+
+.github-link::after {
+  content: "View on GitHub";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 8px;
+  padding: 6px 10px;
+  background: var(--color-text);
+  color: var(--color-surface);
+  font-size: 0.75rem;
+  font-weight: 500;
+  white-space: nowrap;
+  border-radius: 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.15s,
+    visibility 0.15s;
+  pointer-events: none;
+}
+
+.github-link:hover::after {
+  opacity: 1;
+  visibility: visible;
 }
 
 /* Search Section */
@@ -283,6 +330,28 @@ body {
   font-style: italic;
   padding: 24px;
   text-align: center;
+}
+
+/* JSON Data Link */
+.json-data-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: color 0.15s;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+}
+
+.json-data-link:hover {
+  color: var(--color-accent-dark);
+}
+
+.json-data-link i {
+  font-size: 1.1rem;
 }
 
 /* Category Label */

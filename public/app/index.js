@@ -11,6 +11,7 @@ import { PostsTable } from "./components/posts-table.js";
 import { search } from "./data/index.js";
 
 export const App = () => {
+  const [searchData, setSearchData] = useState(null);
   const [posts, setPosts] = useState([]);
   const [selectedPostTypes, setSelectedPostTypes] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -26,6 +27,8 @@ export const App = () => {
     }
 
     setIsFetching(true);
+    setSearchData(null);
+    setPosts([]);
     try {
       const result = await search({
         query,
@@ -33,6 +36,7 @@ export const App = () => {
         categoryPrimary: selectedCategories.map(({ value }) => value),
         minDate,
       });
+      setSearchData(result);
       setPosts(result.posts);
     } catch (err) {
       // TODO(CLEANUP): Use a proper UI error for user.
@@ -46,17 +50,16 @@ export const App = () => {
     <div className="container">
       <header className="header">
         <h1>Vector Search Web Demo</h1>
-        <p>Search blog posts using semantic vector similarity</p>
-        <div className="badges">
+        <div className="subtitle-row">
+          <p>Search blog posts using semantic vector similarity.</p>
           <a
             href="https://github.com/nearform/vector-search-web"
             target="_blank"
             rel="noopener noreferrer"
+            className="github-link"
+            aria-label="View on GitHub"
           >
-            <img
-              src="https://badgen.net/github/release/nearform/vector-search-web?icon=github"
-              alt="GitHub release"
-            />
+            <i className="ph ph-github-logo"></i>
           </a>
         </div>
       </header>
@@ -80,7 +83,7 @@ export const App = () => {
         </form>
       </section>
 
-      <${PostsTable} posts=${posts} />
+      <${PostsTable} posts=${posts} searchData=${searchData} />
 
       <footer className="footer">
         <a
