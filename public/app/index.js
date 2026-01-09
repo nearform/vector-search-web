@@ -46,17 +46,16 @@ export const App = () => {
     <div className="container">
       <header className="header">
         <h1>Vector Search Web Demo</h1>
-        <p>Search blog posts using semantic vector similarity</p>
-        <div className="badges">
+        <div className="subtitle-row">
+          <p>Search blog posts using semantic vector similarity.</p>
           <a
             href="https://github.com/nearform/vector-search-web"
             target="_blank"
             rel="noopener noreferrer"
+            className="github-link"
+            aria-label="View on GitHub"
           >
-            <img
-              src="https://badgen.net/github/release/nearform/vector-search-web?icon=github"
-              alt="GitHub release"
-            />
+            <i className="ph ph-github-logo"></i>
           </a>
         </div>
       </header>
