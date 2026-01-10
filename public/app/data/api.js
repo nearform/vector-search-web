@@ -26,6 +26,14 @@ export const getPosts = getAndCache(() =>
  * Fetch posts-embeddings-256.json from GitHub (cached).
  * @returns {Promise<Object>} Embeddings object keyed by slug
  */
-export const getPostsEmbeddings = getAndCache(() =>
+export const getPostsEmbeddings256 = getAndCache(() =>
   fetchJson(`${GH_BLOB_URL}/posts-embeddings-256.json`),
+);
+
+/**
+ * Fetch posts-embeddings-512.json from GitHub (cached).
+ * @returns {Promise<Object>} Embeddings object keyed by slug
+ */
+export const getPostsEmbeddings512 = getAndCache(() =>
+  fetchJson(`${GH_BLOB_URL}/posts-embeddings-512.json`),
 );

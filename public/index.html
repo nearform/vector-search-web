@@ -65,7 +65,8 @@
       import { App } from "./app/index.js";
       import {
         getPosts,
-        getPostsEmbeddings,
+        getPostsEmbeddings256,
+        getPostsEmbeddings512,
         getExtractor,
         getChunksDb,
       } from "./app/data/index.js";
@@ -74,9 +75,11 @@
       // Preload data and model in parallel (fire and forget)
       // These cache their results, so first search will be fast
       getPosts();
-      getPostsEmbeddings();
+      getPostsEmbeddings256();
+      getPostsEmbeddings512();
       getExtractor();
-      getChunksDb(); // Depends on posts + embeddings, waits for them internally
+      getChunksDb(256);
+      getChunksDb(512);
 
       const html = htm.bind(createElement);
       const root = createRoot(document.getElementById("root"));

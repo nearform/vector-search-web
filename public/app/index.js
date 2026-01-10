@@ -5,6 +5,7 @@ import {
   PostTypeSelect,
   CategorySelect,
   MinDateInput,
+  ChunkSizeSelect,
   SubmitButton,
 } from "./components/forms.js";
 import { PostsTable } from "./components/posts-table.js";
@@ -16,6 +17,7 @@ export const App = () => {
   const [selectedPostTypes, setSelectedPostTypes] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [minDate, setMinDate] = useState("");
+  const [chunkSize, setChunkSize] = useState(256);
   const [isFetching, setIsFetching] = useState(false);
 
   const handleSubmit = async (event) => {
@@ -32,6 +34,7 @@ export const App = () => {
     try {
       const result = await search({
         query,
+        chunkSize,
         postType: selectedPostTypes.map(({ value }) => value),
         categoryPrimary: selectedCategories.map(({ value }) => value),
         minDate,
@@ -78,6 +81,7 @@ export const App = () => {
               setSelected=${setSelectedCategories}
             />
             <${MinDateInput} value=${minDate} setValue=${setMinDate} />
+            <${ChunkSizeSelect} value=${chunkSize} setValue=${setChunkSize} />
             <${SubmitButton} isFetching=${isFetching} />
           </div>
         </form>

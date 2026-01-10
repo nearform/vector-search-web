@@ -5,12 +5,13 @@
  * @returns {Function} Memoized function
  */
 export const getAndCache = (fn) => {
-  let cache;
-  return () => {
-    if (!cache) {
-      cache = fn();
+  const cache = {};
+  return (...args) => {
+    const key = JSON.stringify(args);
+    if (!cache[key]) {
+      cache[key] = fn(...args);
     }
-    return cache;
+    return cache[key];
   };
 };
 
