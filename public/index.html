@@ -78,7 +78,8 @@
       getPostsEmbeddings256();
       getPostsEmbeddings512();
       getExtractor();
-      getChunksDb(256); // Depends on posts + embeddings, waits for them internally
+      getChunksDb(256);
+      getChunksDb(512);
 
       const html = htm.bind(createElement);
       const root = createRoot(document.getElementById("root"));

@@ -25,9 +25,6 @@ export const getExtractor = getAndCache(async () => {
   return extractor;
 });
 
-// Cache for chunk databases by size
-const chunksDbCache = {};
-
 /**
  * Get embeddings data for a given chunk size.
  * @param {number} chunkSize - Chunk size (256 or 512)
@@ -43,11 +40,7 @@ const getEmbeddingsForSize = (chunkSize) => {
  * @param {number} chunkSize - Chunk size (256 or 512)
  * @returns {Promise<Object>} Orama database instance
  */
-export const getChunksDb = async (chunkSize = 256) => {
-  if (chunksDbCache[chunkSize]) {
-    return chunksDbCache[chunkSize];
-  }
-
+export const getChunksDb = getAndCache(async (chunkSize = 256) => {
   const [embeddingsObj, postsObj] = await Promise.all([
     getEmbeddingsForSize(chunkSize),
     getPosts(),
@@ -92,9 +85,8 @@ export const getChunksDb = async (chunkSize = 256) => {
 
   await insertMultiple(db, chunks);
 
-  chunksDbCache[chunkSize] = db;
   return db;
-};
+});
 
 /**
  * Search for posts matching a query using vector similarity.
