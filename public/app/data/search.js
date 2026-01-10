@@ -3,7 +3,11 @@ import { create, insertMultiple, search as oramaSearch } from "@orama/orama";
 import { pipeline } from "@xenova/transformers";
 
 import { getAndCache, dequantizeEmbedding } from "./util.js";
-import { getPosts, getPostsEmbeddings } from "./api.js";
+import {
+  getPosts,
+  getPostsEmbeddings256,
+  getPostsEmbeddings512,
+} from "./api.js";
 
 const MAX_CHUNKS = 50;
 const MIN_SIMILARITY = 0.8;
@@ -21,14 +25,31 @@ export const getExtractor = getAndCache(async () => {
   return extractor;
 });
 
+// Cache for chunk databases by size
+const chunksDbCache = {};
+
 /**
- * Create the Orama chunks database (cached).
+ * Get embeddings data for a given chunk size.
+ * @param {number} chunkSize - Chunk size (256 or 512)
+ * @returns {Promise<Object>} Embeddings object keyed by slug
+ */
+const getEmbeddingsForSize = (chunkSize) => {
+  return chunkSize === 512 ? getPostsEmbeddings512() : getPostsEmbeddings256();
+};
+
+/**
+ * Create the Orama chunks database (cached per chunk size).
  * Depends on posts and embeddings being fetched first.
+ * @param {number} chunkSize - Chunk size (256 or 512)
  * @returns {Promise<Object>} Orama database instance
  */
-export const getChunksDb = getAndCache(async () => {
+export const getChunksDb = async (chunkSize = 256) => {
+  if (chunksDbCache[chunkSize]) {
+    return chunksDbCache[chunkSize];
+  }
+
   const [embeddingsObj, postsObj] = await Promise.all([
-    getPostsEmbeddings(),
+    getEmbeddingsForSize(chunkSize),
     getPosts(),
   ]);
 
@@ -71,23 +92,31 @@ export const getChunksDb = getAndCache(async () => {
 
   await insertMultiple(db, chunks);
 
+  chunksDbCache[chunkSize] = db;
   return db;
-});
+};
 
 /**
  * Search for posts matching a query using vector similarity.
  * @param {Object} params
  * @param {string} params.query - The search query
+ * @param {number} [params.chunkSize=256] - Chunk size for embeddings (256 or 512)
  * @param {string[]} [params.postType] - Filter by post types
  * @param {string} [params.minDate] - Filter by minimum date (YYYY-MM-DD)
  * @param {string[]} [params.categoryPrimary] - Filter by primary categories
  * @returns {Promise<{posts: Object[], chunks: Array, metadata: Object}>}
  */
-export const search = async ({ query, postType, minDate, categoryPrimary }) => {
-  const chunksDb = await getChunksDb();
+export const search = async ({
+  query,
+  chunkSize = 256,
+  postType,
+  minDate,
+  categoryPrimary,
+}) => {
+  const chunksDb = await getChunksDb(chunkSize);
   const extractor = await getExtractor();
   const postsData = await getPosts();
-  const chunksData = await getPostsEmbeddings();
+  const chunksData = await getEmbeddingsForSize(chunkSize);
 
   // Generate query embedding
   const startTime = performance.now();

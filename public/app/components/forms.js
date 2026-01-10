@@ -70,6 +70,26 @@ export const MinDateInput = ({ value, setValue }) => html`
   </div>
 `;
 
+const CHUNK_SIZE_OPTIONS = [
+  { label: "256 tokens", value: 256 },
+  { label: "512 tokens", value: 512 },
+];
+
+export const ChunkSizeSelect = ({ value, setValue }) => html`
+  <div className="form-field form-field-inline">
+    <label htmlFor="chunkSize">Chunk Size</label>
+    <${Select}
+      id="chunkSize"
+      options=${CHUNK_SIZE_OPTIONS}
+      value=${CHUNK_SIZE_OPTIONS.find((opt) => opt.value === value)}
+      onChange=${(option) => setValue(option.value)}
+      className="multi-select"
+      classNamePrefix="select"
+      isSearchable=${false}
+    />
+  </div>
+`;
+
 export const SubmitButton = ({ isFetching, label = "Search" }) => html`
   <button
     type="submit"
