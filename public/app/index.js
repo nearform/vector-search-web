@@ -57,19 +57,19 @@ export const App = () => {
         <p className="intro">
           Client-side vector search powered by${" "}
           <a
-            href="https://docs.oramasearch.com/"
+            href="https://docs.oramasearch.com/docs/orama-js"
             target="_blank"
             rel="noopener noreferrer"
           >
             Orama </a
-          >${" "} — runs entirely in-browser on${" "}
+          >${" "} — search for${" "}
           <a
             href="https://nearform.com/insights/"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Nearform blog </a
-          >${" "}data.${" "}
+            Nearform articles</a
+          >${" "} entirely in the browser!${" "}
           <a
             href="https://github.com/nearform/vector-search-web"
             target="_blank"
