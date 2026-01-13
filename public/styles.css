@@ -51,65 +51,48 @@ body {
   letter-spacing: -0.02em;
 }
 
-.header p {
-  margin: 0;
+.intro {
+  margin: 8px 0 0;
   color: var(--color-text-muted);
-  font-size: 1.1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: center;
+  text-wrap: balance;
 }
 
-.subtitle-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
+.intro a {
+  color: var(--color-accent-dark);
+  text-decoration: none;
+  font-weight: 500;
 }
 
-.github-link {
-  position: relative;
-  display: flex;
+.intro a:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.intro a.intro-github-link {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  vertical-align: text-bottom;
+  width: 22px;
+  height: 22px;
+  margin-left: 6px;
   background: var(--color-border);
   border-radius: 50%;
-  font-size: 1.2rem;
-  color: var(--color-text);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  text-decoration: none;
   transition:
     background 0.15s,
     color 0.15s;
 }
 
-.github-link:hover {
+.intro a.intro-github-link:hover {
   background: var(--color-accent);
   color: white;
-}
-
-.github-link::after {
-  content: "View on GitHub";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-top: 8px;
-  padding: 6px 10px;
-  background: var(--color-text);
-  color: var(--color-surface);
-  font-size: 0.75rem;
-  font-weight: 500;
-  white-space: nowrap;
-  border-radius: 4px;
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity 0.15s,
-    visibility 0.15s;
-  pointer-events: none;
-}
-
-.github-link:hover::after {
-  opacity: 1;
-  visibility: visible;
+  text-decoration: none;
 }
 
 /* Search Section */

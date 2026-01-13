@@ -54,18 +54,32 @@ export const App = () => {
     <div className="container">
       <header className="header">
         <h1>Vector Search Web Demo</h1>
-        <div className="subtitle-row">
-          <p>Search blog posts using semantic vector similarity.</p>
+        <p className="intro">
+          Client-side vector search powered by${" "}
+          <a
+            href="https://docs.oramasearch.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Orama </a
+          >${" "} — runs entirely in-browser on${" "}
+          <a
+            href="https://nearform.com/insights/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Nearform blog </a
+          >${" "}data.${" "}
           <a
             href="https://github.com/nearform/vector-search-web"
             target="_blank"
             rel="noopener noreferrer"
-            className="github-link"
+            className="intro-github-link"
             aria-label="View on GitHub"
           >
             <i className="ph ph-github-logo"></i>
           </a>
-        </div>
+        </p>
       </header>
 
       <section className="search-section">
