@@ -1,8 +1,8 @@
-/* global performance:false */
-import { create, insertMultiple, search as oramaSearch } from "@orama/orama";
+import { create, insertMultiple, search } from "@orama/orama";
 import { pipeline } from "@xenova/transformers";
 
 import { getAndCache, dequantizeEmbedding } from "./util.js";
+import { createTimer } from "./timing.js";
 import {
   getPosts,
   getPostsEmbeddings256,
@@ -65,6 +65,7 @@ export const getChunksDb = getAndCache(async (chunkSize = 256) => {
     }));
   });
 
+  const dbTimer = createTimer(`Create chunksDb (${chunkSize})`);
   const db = await create({
     schema: {
       // Post metadata for filtering.
@@ -84,6 +85,7 @@ export const getChunksDb = getAndCache(async (chunkSize = 256) => {
   });
 
   await insertMultiple(db, chunks);
+  dbTimer.end();
 
   return db;
 });
@@ -98,7 +100,7 @@ export const getChunksDb = getAndCache(async (chunkSize = 256) => {
  * @param {string[]} [params.categoryPrimary] - Filter by primary categories
  * @returns {Promise<{posts: Object[], chunks: Array, metadata: Object}>}
  */
-export const search = async ({
+export const searchPosts = async ({
   query,
   chunkSize = 256,
   postType,
@@ -111,13 +113,13 @@ export const search = async ({
   const chunksData = await getEmbeddingsForSize(chunkSize);
 
   // Generate query embedding
-  const startTime = performance.now();
+  const embeddingTimer = createTimer("Query embedding");
   const queryExtracted = await extractor(query, {
     pooling: "mean",
     normalize: true,
   });
   const queryEmbedding = Array.from(queryExtracted.data);
-  const embeddingTime = performance.now() - startTime;
+  const embeddingTime = embeddingTimer.end();
 
   // Build where clause for filtering
   const where = {};
@@ -132,14 +134,15 @@ export const search = async ({
   }
 
   // Vector search on chunks DB
-  const results = await oramaSearch(chunksDb, {
+  const searchTimer = createTimer("Vector search");
+  const results = await search(chunksDb, {
     mode: "vector",
     vector: { value: queryEmbedding, property: "embeddings" },
     limit: MAX_CHUNKS,
     similarity: MIN_SIMILARITY,
     where: Object.keys(where).length > 0 ? where : undefined,
   });
-  const searchTime = performance.now() - startTime;
+  const searchTime = searchTimer.end();
 
   // Build posts map and chunks array
   const postsMap = {};

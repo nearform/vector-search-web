@@ -9,7 +9,7 @@ import {
   SubmitButton,
 } from "./components/forms.js";
 import { PostsTable } from "./components/posts-table.js";
-import { search } from "./data/index.js";
+import { searchPosts } from "./data/index.js";
 
 export const App = () => {
   const [searchData, setSearchData] = useState(null);
@@ -32,7 +32,7 @@ export const App = () => {
     setSearchData(null);
     setPosts([]);
     try {
-      const result = await search({
+      const result = await searchPosts({
         query,
         chunkSize,
         postType: selectedPostTypes.map(({ value }) => value),
