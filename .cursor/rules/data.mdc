@@ -4,8 +4,6 @@ globs: public/**/*.js
 alwaysApply: false
 ---
 
-<!-- TODO(CURSOR): update globs, no alwaysApply -->
-
 # Data Development Guidelines
 
 ## Core Philosophy

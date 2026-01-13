@@ -19,6 +19,7 @@ export const App = () => {
   const [minDate, setMinDate] = useState("");
   const [chunkSize, setChunkSize] = useState(256);
   const [isFetching, setIsFetching] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -31,6 +32,7 @@ export const App = () => {
     setIsFetching(true);
     setSearchData(null);
     setPosts([]);
+    setError(null);
     try {
       const result = await searchPosts({
         query,
@@ -42,8 +44,7 @@ export const App = () => {
       setSearchData(result);
       setPosts(result.posts);
     } catch (err) {
-      // TODO(CLEANUP): Use a proper UI error for user.
-      console.error("Search failed:", err); // eslint-disable-line no-undef
+      setError(err.message || "Search failed");
     } finally {
       setIsFetching(false);
     }
@@ -53,18 +54,32 @@ export const App = () => {
     <div className="container">
       <header className="header">
         <h1>Vector Search Web Demo</h1>
-        <div className="subtitle-row">
-          <p>Search blog posts using semantic vector similarity.</p>
+        <p className="intro">
+          Client-side vector search powered by${" "}
+          <a
+            href="https://docs.oramasearch.com/docs/orama-js"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Orama </a
+          >${" "} — search for${" "}
+          <a
+            href="https://nearform.com/insights/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Nearform articles</a
+          >${" "} entirely in the browser!${" "}
           <a
             href="https://github.com/nearform/vector-search-web"
             target="_blank"
             rel="noopener noreferrer"
-            className="github-link"
+            className="intro-github-link"
             aria-label="View on GitHub"
           >
             <i className="ph ph-github-logo"></i>
           </a>
-        </div>
+        </p>
       </header>
 
       <section className="search-section">
@@ -86,6 +101,17 @@ export const App = () => {
           </div>
         </form>
       </section>
+
+      ${error &&
+      html`
+        <div className="error-alert">
+          <i className="ph ph-warning-circle"></i>
+          <span>${error}</span>
+          <button className="error-dismiss" onClick=${() => setError(null)}>
+            <i className="ph ph-x"></i>
+          </button>
+        </div>
+      `}
 
       <${PostsTable} posts=${posts} searchData=${searchData} />
 
