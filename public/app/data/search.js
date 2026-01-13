@@ -1,5 +1,5 @@
 /* global performance:false */
-import { create, insertMultiple, search as oramaSearch } from "@orama/orama";
+import { create, insertMultiple, search } from "@orama/orama";
 import { pipeline } from "@xenova/transformers";
 
 import { getAndCache, dequantizeEmbedding } from "./util.js";
@@ -98,7 +98,7 @@ export const getChunksDb = getAndCache(async (chunkSize = 256) => {
  * @param {string[]} [params.categoryPrimary] - Filter by primary categories
  * @returns {Promise<{posts: Object[], chunks: Array, metadata: Object}>}
  */
-export const search = async ({
+export const searchPosts = async ({
   query,
   chunkSize = 256,
   postType,
@@ -132,7 +132,7 @@ export const search = async ({
   }
 
   // Vector search on chunks DB
-  const results = await oramaSearch(chunksDb, {
+  const results = await search(chunksDb, {
     mode: "vector",
     vector: { value: queryEmbedding, property: "embeddings" },
     limit: MAX_CHUNKS,
