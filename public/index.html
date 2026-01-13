@@ -63,23 +63,11 @@
       import { createElement } from "react";
       import htm from "htm";
       import { App } from "./app/index.js";
-      import {
-        getPosts,
-        getPostsEmbeddings256,
-        getPostsEmbeddings512,
-        getExtractor,
-        getChunksDb,
-      } from "./app/data/index.js";
+      import { initData } from "./app/data/index.js";
 
-      // TODO(CLEANUP): Add a loading wrapper AND handle errors.
       // Preload data and model in parallel (fire and forget)
       // These cache their results, so first search will be fast
-      getPosts();
-      getPostsEmbeddings256();
-      getPostsEmbeddings512();
-      getExtractor();
-      getChunksDb(256);
-      getChunksDb(512);
+      initData();
 
       const html = htm.bind(createElement);
       const root = createRoot(document.getElementById("root"));
