@@ -1,5 +1,6 @@
 import { create, insertMultiple, search } from "@orama/orama";
 import { pipeline } from "@xenova/transformers";
+import { getChunk } from "llm-splitter";
 
 import { getAndCache, dequantizeEmbedding } from "./util.js";
 import { createTimer } from "./timing.js";
@@ -163,19 +164,19 @@ export const searchPosts = async ({
     const embeddingNumTokens = chunkMeta?.embeddingNumTokens;
     similarities.push(similarity);
 
-    // Add chunk to array
-    chunksArray.push({
+    const chunkData = {
       slug,
       start: chunkStart,
       end: chunkEnd,
       embeddingNumTokens,
       similarity,
-    });
+    };
 
     // Build/update post entry
     if (!postsMap[slug]) {
       const post = postsData[slug];
       if (post) {
+        chunkData.text = getChunk(post.content, chunkStart, chunkEnd);
         postsMap[slug] = {
           slug,
           title: post.title,
@@ -187,6 +188,9 @@ export const searchPosts = async ({
           similarityMax: similarity,
         };
       }
+
+      // Add chunk to array
+      chunksArray.push(chunkData);
     } else if (similarity > postsMap[slug].similarityMax) {
       postsMap[slug].similarityMax = similarity;
     }
