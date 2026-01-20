@@ -20,10 +20,9 @@ const dateToNumber = (date) => Date.parse(date);
  * Downloads the model on first call (~30MB).
  * @returns {Promise<Function>} Transformers pipeline
  */
-export const getExtractor = getAndCache(async () => {
-  const extractor = await pipeline("feature-extraction", EMBEDDING_MODEL);
-  return extractor;
-});
+export const getExtractor = getAndCache(() =>
+  pipeline("feature-extraction", EMBEDDING_MODEL),
+);
 
 /**
  * Get embeddings data for a given chunk size.
@@ -107,10 +106,12 @@ export const searchPosts = async ({
   minDate,
   categoryPrimary,
 }) => {
-  const chunksDb = await getChunksDb(chunkSize);
-  const extractor = await getExtractor();
-  const postsData = await getPosts();
-  const chunksData = await getEmbeddingsForSize(chunkSize);
+  const [chunksDb, extractor, postsData, chunksData] = await Promise.all([
+    getChunksDb(chunkSize),
+    getExtractor(),
+    getPosts(),
+    getEmbeddingsForSize(chunkSize),
+  ]);
 
   // Generate query embedding
   const embeddingTimer = createTimer("Query embedding");
