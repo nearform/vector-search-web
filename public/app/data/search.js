@@ -66,7 +66,7 @@ export const getChunksDb = getAndCache(async (chunkSize = 256) => {
   });
 
   const dbTimer = createTimer(`Create chunksDb (${chunkSize})`);
-  const db = await create({
+  const db = create({
     schema: {
       // Post metadata for filtering.
       slug: "string",
@@ -84,7 +84,7 @@ export const getChunksDb = getAndCache(async (chunkSize = 256) => {
     },
   });
 
-  await insertMultiple(db, chunks);
+  insertMultiple(db, chunks);
   dbTimer.end();
 
   return db;
@@ -137,7 +137,7 @@ export const searchPosts = async ({
 
   // Vector search on chunks DB
   const searchTimer = createTimer("Vector search");
-  const results = await search(chunksDb, {
+  const results = search(chunksDb, {
     mode: "vector",
     vector: { value: queryEmbedding, property: "embeddings" },
     limit: MAX_CHUNKS,
