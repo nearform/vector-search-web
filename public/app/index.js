@@ -61,8 +61,8 @@ export const App = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Orama </a
-          >${" "} — search for${" "}
+            Orama</a
+          >${" "}— search for${" "}
           <a
             href="https://nearform.com/insights/"
             target="_blank"
