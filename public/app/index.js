@@ -69,7 +69,14 @@ export const App = () => {
             rel="noopener noreferrer"
           >
             Nearform articles</a
-          >${" "} entirely in the browser!${" "}
+          >${" "} entirely in the browser! Read the${" "}
+          <a
+            href="https://nearform.com/digital-community/browser-based-vector-search-fast-private-and-no-backend-required/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            blog post</a
+          >.${" "}
           <a
             href="https://github.com/nearform/vector-search-web"
             target="_blank"
