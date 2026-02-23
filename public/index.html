@@ -74,5 +74,9 @@
       const root = createRoot(document.getElementById("root"));
       root.render(html`<${App} />`);
     </script>
+    <script type="module">
+      const { registerWebMcpTools } = await import("./app/data/webmcp.js");
+      registerWebMcpTools();
+    </script>
   </body>
 </html>
