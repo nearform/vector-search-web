@@ -29,6 +29,35 @@ Vector search across Nearform blog posts, case studies, and services using seman
 3. The `search_nearform_knowledge` tool registers automatically via `navigator.modelContext`.
 4. An MCP-capable agent running in Chrome can discover and invoke the tool.
 
+## Testing from DevTools
+
+Chrome exposes `navigator.modelContextTesting` when the "WebMCP for testing" flag is enabled. Use it to list and invoke registered tools from the console:
+
+```js
+// Verify the tool registered
+navigator.modelContextTesting.listTools();
+
+// Execute and pretty-print the result
+const raw = await navigator.modelContextTesting.executeTool(
+  "search_nearform_knowledge",
+  JSON.stringify({ query: "microservices architecture" }),
+);
+console.log(JSON.parse(raw).content[0].text);
+
+// With filters
+const filtered = await navigator.modelContextTesting.executeTool(
+  "search_nearform_knowledge",
+  JSON.stringify({
+    query: "React performance",
+    postType: ["blog"],
+    minDate: "2024-01-01",
+  }),
+);
+console.log(JSON.parse(filtered).content[0].text);
+```
+
+Alternatively, install the [Model Context Tool Inspector][tool-inspector] Chrome extension for a sidebar UI that lists and invokes tools.
+
 ## Example Queries
 
 ```json
@@ -79,6 +108,8 @@ Vector search across Nearform blog posts, case studies, and services using seman
 
 - [Chrome Developer Blog — WebMCP early preview][webmcp-blog]
 - [W3C WebMCP spec (webmachinelearning/webmcp)][webmcp-spec]
+- [Model Context Tool Inspector extension][tool-inspector]
 
 [webmcp-blog]: https://developer.chrome.com/blog/webmcp-epp
 [webmcp-spec]: https://github.com/webmachinelearning/webmcp
+[tool-inspector]: https://github.com/beaufortfrancois/model-context-tool-inspector
