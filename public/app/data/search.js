@@ -1,3 +1,4 @@
+/* global navigator:false */
 import { create, insertMultiple, search } from "@orama/orama";
 import { pipeline } from "@xenova/transformers";
 import { getChunk } from "llm-splitter";
@@ -21,9 +22,21 @@ const dateToNumber = (date) => Date.parse(date);
  * Downloads the model on first call (~30MB).
  * @returns {Promise<Function>} Transformers pipeline
  */
-export const getExtractor = getAndCache(() =>
-  pipeline("feature-extraction", EMBEDDING_MODEL),
-);
+export const getExtractor = getAndCache(async () => {
+  let opts;
+  if ("gpu" in navigator) {
+    try {
+      const adapter = await navigator.gpu.requestAdapter();
+      if (adapter) {
+        opts = { ...opts, device: "webgpu" };
+      }
+    } catch {
+      /* fall through to WASM */
+    }
+  }
+
+  return pipeline("feature-extraction", EMBEDDING_MODEL, opts);
+});
 
 /**
  * Get embeddings data for a given chunk size.
@@ -121,6 +134,7 @@ export const searchPosts = async ({
     normalize: true,
   });
   const queryEmbedding = Array.from(queryExtracted.data);
+  queryExtracted.dispose?.(); // free up memory aggressively (espcially for wasm).
   const embeddingTime = embeddingTimer.end();
 
   // Build where clause for filtering
