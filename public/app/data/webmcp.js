@@ -1,9 +1,5 @@
 /* global navigator:false */
-import { searchPosts } from "./search.js";
-import { POST_TYPE_OPTIONS } from "../components/forms.js";
-import { CATEGORIES_LIST } from "../components/category.js";
-
-const POST_TYPE_VALUES = POST_TYPE_OPTIONS.map((o) => o.value);
+import { TOOL_SCHEMA, executeSearch } from "./tool-defs.js";
 
 const checkWebMcpSupport = () => {
   if ("modelContext" in navigator) return true;
@@ -31,69 +27,12 @@ export const registerWebMcpTools = () => {
   if (!checkWebMcpSupport()) return;
 
   navigator.modelContext.registerTool({
-    name: "search_nearform_knowledge",
-    description:
-      "Vector search across Nearform blog posts and case studies using semantic similarity. Returns matching posts with titles, URLs, dates, and similarity scores.",
-    inputSchema: {
-      type: "object",
-      properties: {
-        query: {
-          type: "string",
-          description: "Search query (e.g. 'microservices architecture')",
-        },
-        postType: {
-          type: "array",
-          items: { type: "string", enum: POST_TYPE_VALUES },
-          description: `Filter by type: ${POST_TYPE_VALUES.join(", ")}. Only use when the user explicitly requests case studies (work) or blog posts. Omit for general queries.`,
-        },
-        minDate: {
-          type: "string",
-          description: "Only posts after this date, YYYY-MM-DD (optional)",
-        },
-        categoryPrimary: {
-          type: "array",
-          items: { type: "string", enum: CATEGORIES_LIST },
-          description: `Filter by category: ${CATEGORIES_LIST.join(", ")} (optional)`,
-        },
-      },
-      required: ["query"],
-    },
+    ...TOOL_SCHEMA,
     annotations: { readOnlyHint: true },
     execute: async (input) => {
-      const result = await searchPosts({
-        query: input.query,
-        postType: input.postType || [],
-        minDate: input.minDate || "",
-        categoryPrimary: input.categoryPrimary || [],
-        chunkSize: 256,
-      });
+      const payload = await executeSearch(input);
       return {
-        content: [
-          {
-            type: "text",
-            text: JSON.stringify(
-              {
-                postCount: result.posts.length,
-                posts: result.posts.map((p) => ({
-                  title: p.title,
-                  href: p.href,
-                  date: p.date,
-                  type: p.postType,
-                  categories: p.categories,
-                  similarity: p.similarityMax,
-                })),
-                chunks: result.chunks.map((c) => ({
-                  slug: c.slug,
-                  text: c.text,
-                  similarity: c.similarity,
-                })),
-                metadata: result.metadata,
-              },
-              null,
-              2,
-            ),
-          },
-        ],
+        content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
       };
     },
   });
