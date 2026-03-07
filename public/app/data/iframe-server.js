@@ -21,7 +21,7 @@ const TOOL_SCHEMA = {
       postType: {
         type: "array",
         items: { type: "string", enum: POST_TYPE_VALUES },
-        description: `Filter by type: ${POST_TYPE_VALUES.join(", ")} (optional)`,
+        description: `Filter by type: ${POST_TYPE_VALUES.join(", ")}. Only use when the user explicitly requests case studies (work) or blog posts. Omit for general queries.`,
       },
       minDate: {
         type: "string",
