@@ -1,44 +1,48 @@
 /* global window:false, console:false */
+import { IframeChildTransport } from "@anthropic-ai/mcp-bridge-transports";
 import { TOOL_SCHEMA, executeSearch } from "./tool-defs.js";
-
-const ALLOWED_ORIGINS = ["http://localhost:4610", "http://127.0.0.1:4610"];
-
-const handleMessage = async (event) => {
-  if (!ALLOWED_ORIGINS.includes(event.origin)) return;
-
-  const { type, name, args, id } = event.data || {};
-
-  if (type === "mcp:list-tools") {
-    event.source.postMessage(
-      { type: "mcp:tools", tools: [TOOL_SCHEMA], id },
-      event.origin,
-    );
-    return;
-  }
-
-  if (type === "mcp:call-tool" && name === TOOL_SCHEMA.name) {
-    try {
-      const payload = await executeSearch(args);
-      event.source.postMessage(
-        { type: "mcp:tool-result", result: payload, id },
-        event.origin,
-      );
-    } catch (err) {
-      event.source.postMessage(
-        { type: "mcp:tool-error", error: err.message, id },
-        event.origin,
-      );
-    }
-  }
-};
 
 export const initIframeServer = () => {
   if (window === window.parent) return;
-  window.addEventListener("message", handleMessage);
-  console.log("[iframe-server] Listening for MCP messages");
 
-  // Notify parent that the server is ready (module scripts load after iframe load event)
-  for (const origin of ALLOWED_ORIGINS) {
-    window.parent.postMessage({ type: "mcp:ready" }, origin);
-  }
+  const transport = new IframeChildTransport({
+    allowedOrigins: ["http://localhost:4610", "http://127.0.0.1:4610"],
+  });
+
+  transport.onmessage = async (message) => {
+    const { jsonrpc, id, method, params } = message;
+    if (jsonrpc !== "2.0" || id == null) return;
+
+    if (method === "tools/list") {
+      transport.send({ jsonrpc: "2.0", id, result: { tools: [TOOL_SCHEMA] } });
+      return;
+    }
+
+    if (method === "tools/call") {
+      try {
+        const payload = await executeSearch(params.arguments);
+        transport.send({ jsonrpc: "2.0", id, result: payload });
+      } catch (err) {
+        transport.send({
+          jsonrpc: "2.0",
+          id,
+          error: { code: -32000, message: err.message },
+        });
+      }
+      return;
+    }
+
+    transport.send({
+      jsonrpc: "2.0",
+      id,
+      error: { code: -32601, message: `Method not found: ${method}` },
+    });
+  };
+
+  transport.onerror = (err) => {
+    console.warn("[iframe-server] Transport error:", err);
+  };
+
+  transport.start();
+  console.log("[iframe-server] MCP transport started");
 };
