@@ -1,5 +1,9 @@
 /* global navigator:false */
 import { searchPosts } from "./search.js";
+import { POST_TYPE_OPTIONS } from "../components/forms.js";
+import { CATEGORIES_LIST } from "../components/category.js";
+
+const POST_TYPE_VALUES = POST_TYPE_OPTIONS.map((o) => o.value);
 
 const checkWebMcpSupport = () => {
   if ("modelContext" in navigator) return true;
@@ -29,7 +33,7 @@ export const registerWebMcpTools = () => {
   navigator.modelContext.registerTool({
     name: "search_nearform_knowledge",
     description:
-      "Vector search across Nearform blog posts, case studies, and services using semantic similarity. Returns matching posts with titles, URLs, dates, and similarity scores.",
+      "Vector search across Nearform blog posts and case studies using semantic similarity. Returns matching posts with titles, URLs, dates, and similarity scores.",
     inputSchema: {
       type: "object",
       properties: {
@@ -39,8 +43,8 @@ export const registerWebMcpTools = () => {
         },
         postType: {
           type: "array",
-          items: { type: "string" },
-          description: "Filter by type: blog, service, work (optional)",
+          items: { type: "string", enum: POST_TYPE_VALUES },
+          description: `Filter by type: ${POST_TYPE_VALUES.join(", ")} (optional)`,
         },
         minDate: {
           type: "string",
@@ -48,9 +52,8 @@ export const registerWebMcpTools = () => {
         },
         categoryPrimary: {
           type: "array",
-          items: { type: "string" },
-          description:
-            "Filter by category: ai, design, backend, etc. (optional)",
+          items: { type: "string", enum: CATEGORIES_LIST },
+          description: `Filter by category: ${CATEGORIES_LIST.join(", ")} (optional)`,
         },
       },
       required: ["query"],
