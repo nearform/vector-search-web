@@ -119,6 +119,7 @@ export const searchPosts = async ({
   postType,
   minDate,
   categoryPrimary,
+  maxChunks,
 }) => {
   const [chunksDb, extractor, postsData, chunksData] = await Promise.all([
     getChunksDb(chunkSize),
@@ -225,6 +226,9 @@ export const searchPosts = async ({
         }
       : { min: 0, max: 0, avg: 0 };
 
+  const chunkLimit = Math.min(maxChunks || MAX_CHUNKS, MAX_CHUNKS);
+  const limitedChunks = chunksArray.slice(0, chunkLimit);
+
   return {
     metadata: {
       elapsed: {
@@ -232,11 +236,11 @@ export const searchPosts = async ({
         search: searchTime,
       },
       chunks: {
-        count: chunksArray.length,
+        count: limitedChunks.length,
         similarity: similarityStats,
       },
     },
     posts,
-    chunks: chunksArray,
+    chunks: limitedChunks,
   };
 };

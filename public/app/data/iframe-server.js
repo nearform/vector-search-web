@@ -3,7 +3,9 @@ import { IframeChildTransport } from "@mcp-b/transports";
 import { TOOL_SCHEMA, executeSearch } from "./tool-defs.js";
 
 const DEBUG = new URLSearchParams(window.location.search).has("debug");
-const log = (level, ...args) => { if (DEBUG) console[level]("[iframe-server]", ...args); };
+const log = (level, ...args) => {
+  if (DEBUG) console[level]("[iframe-server]", ...args); // eslint-disable-line no-undef
+};
 
 export const initIframeServer = () => {
   if (window === window.parent) return;

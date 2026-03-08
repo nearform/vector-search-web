@@ -29,6 +29,10 @@ export const TOOL_SCHEMA = {
         items: { type: "string", enum: CATEGORIES_LIST },
         description: `Filter by category: ${CATEGORIES_LIST.join(", ")} (optional)`,
       },
+      maxChunks: {
+        type: "number",
+        description: "Maximum number of chunks to return (default 50, max 50)",
+      },
     },
     required: ["query"],
   },
@@ -41,6 +45,7 @@ export const executeSearch = async (args) => {
     minDate: args.minDate || "",
     categoryPrimary: args.categoryPrimary || [],
     chunkSize: 256,
+    maxChunks: args.maxChunks,
   });
   return {
     postCount: result.posts.length,
