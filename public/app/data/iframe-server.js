@@ -1,6 +1,9 @@
-/* global window:false, console:false */
+/* global window:false, URLSearchParams:false */
 import { IframeChildTransport } from "@mcp-b/transports";
 import { TOOL_SCHEMA, executeSearch } from "./tool-defs.js";
+
+const DEBUG = new URLSearchParams(window.location.search).has("debug");
+const log = (level, ...args) => { if (DEBUG) console[level]("[iframe-server]", ...args); };
 
 export const initIframeServer = () => {
   if (window === window.parent) return;
@@ -40,9 +43,9 @@ export const initIframeServer = () => {
   };
 
   transport.onerror = (err) => {
-    console.warn("[iframe-server] Transport error:", err);
+    log("warn", "Transport error:", err);
   };
 
   transport.start();
-  console.log("[iframe-server] MCP transport started");
+  log("log", "MCP transport started");
 };
