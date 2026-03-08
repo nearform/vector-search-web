@@ -1,5 +1,5 @@
 /* global window:false, console:false */
-import { IframeChildTransport } from "@anthropic-ai/mcp-bridge-transports";
+import { IframeChildTransport } from "@mcp-b/transports";
 import { TOOL_SCHEMA, executeSearch } from "./tool-defs.js";
 
 export const initIframeServer = () => {
