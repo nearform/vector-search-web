@@ -29,8 +29,18 @@ export const initIframeServer = () => {
 
     if (method === "tools/call") {
       try {
+        // MCP tools/call result must contain a `content` array and optional `isError` flag.
+        // See: https://modelcontextprotocol.io/specification/2025-06-18/server/tools
+        // Format: { content: [{ type: "text", text: "..." }], isError: false }
         const payload = await executeSearch(params.arguments);
-        transport.send({ jsonrpc: "2.0", id, result: payload });
+        transport.send({
+          jsonrpc: "2.0",
+          id,
+          result: {
+            content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+            isError: false,
+          },
+        });
       } catch (err) {
         transport.send({
           jsonrpc: "2.0",

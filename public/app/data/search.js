@@ -28,7 +28,7 @@ export const getExtractor = getAndCache(async () => {
     try {
       const adapter = await navigator.gpu.requestAdapter();
       if (adapter) {
-        opts = { ...opts, device: "webgpu" };
+        opts = { device: "webgpu" };
       }
     } catch {
       /* fall through to WASM */
@@ -111,6 +111,7 @@ export const getChunksDb = getAndCache(async (chunkSize = 256) => {
  * @param {string[]} [params.postType] - Filter by post types
  * @param {string} [params.minDate] - Filter by minimum date (YYYY-MM-DD)
  * @param {string[]} [params.categoryPrimary] - Filter by primary categories
+ * @param {number} [params.maxChunks] - Maximum number of chunks to return (default 50, max 50)
  * @returns {Promise<{posts: Object[], chunks: Array, metadata: Object}>}
  */
 export const searchPosts = async ({
@@ -135,7 +136,7 @@ export const searchPosts = async ({
     normalize: true,
   });
   const queryEmbedding = Array.from(queryExtracted.data);
-  queryExtracted.dispose?.(); // free up memory aggressively (espcially for wasm).
+  queryExtracted.dispose?.(); // free up memory aggressively (especially for wasm).
   const embeddingTime = embeddingTimer.end();
 
   // Build where clause for filtering
@@ -226,7 +227,7 @@ export const searchPosts = async ({
         }
       : { min: 0, max: 0, avg: 0 };
 
-  const chunkLimit = Math.min(maxChunks || MAX_CHUNKS, MAX_CHUNKS);
+  const chunkLimit = Math.min(Math.max(maxChunks ?? MAX_CHUNKS, 1), MAX_CHUNKS);
   const limitedChunks = chunksArray.slice(0, chunkLimit);
 
   return {
