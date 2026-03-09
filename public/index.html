@@ -57,6 +57,7 @@
           "react-is": "https://cdn.jsdelivr.net/npm/react-is@19.2.3/+esm",
           "react-select": "https://cdn.jsdelivr.net/npm/react-select@5.10.2/+esm",
           "@mcp-b/transports": "https://cdn.jsdelivr.net/npm/@mcp-b/transports@2.1.0/+esm",
+          "@mcp-b/webmcp-polyfill": "https://cdn.jsdelivr.net/npm/@mcp-b/webmcp-polyfill@2.1.0/+esm",
 
           "https://cdn.jsdelivr.net/npm/react@19.0.0/": "https://cdn.jsdelivr.net/npm/react@19.2.3/",
           "https://cdn.jsdelivr.net/npm/react@19.1.0/": "https://cdn.jsdelivr.net/npm/react@19.2.3/",
@@ -70,6 +71,9 @@
       import htm from "htm";
       import { App } from "./app/index.js";
       import { initData } from "./app/data/index.js";
+      import { initializeWebMCPPolyfill } from "@mcp-b/webmcp-polyfill";
+
+      initializeWebMCPPolyfill();
 
       // Preload data and model in parallel (fire and forget)
       // These cache their results, so first search will be fast
