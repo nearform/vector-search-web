@@ -1,3 +1,4 @@
+/* global navigator:false */
 import { create, insertMultiple, search } from "@orama/orama";
 import { pipeline } from "@xenova/transformers";
 import { getChunk } from "llm-splitter";
@@ -21,9 +22,21 @@ const dateToNumber = (date) => Date.parse(date);
  * Downloads the model on first call (~30MB).
  * @returns {Promise<Function>} Transformers pipeline
  */
-export const getExtractor = getAndCache(() =>
-  pipeline("feature-extraction", EMBEDDING_MODEL),
-);
+export const getExtractor = getAndCache(async () => {
+  let opts;
+  if ("gpu" in navigator) {
+    try {
+      const adapter = await navigator.gpu.requestAdapter();
+      if (adapter) {
+        opts = { device: "webgpu" };
+      }
+    } catch {
+      /* fall through to WASM */
+    }
+  }
+
+  return pipeline("feature-extraction", EMBEDDING_MODEL, opts);
+});
 
 /**
  * Get embeddings data for a given chunk size.
@@ -98,6 +111,7 @@ export const getChunksDb = getAndCache(async (chunkSize = 256) => {
  * @param {string[]} [params.postType] - Filter by post types
  * @param {string} [params.minDate] - Filter by minimum date (YYYY-MM-DD)
  * @param {string[]} [params.categoryPrimary] - Filter by primary categories
+ * @param {number} [params.maxChunks] - Maximum number of chunks to return (default 50, max 50)
  * @returns {Promise<{posts: Object[], chunks: Array, metadata: Object}>}
  */
 export const searchPosts = async ({
@@ -106,6 +120,7 @@ export const searchPosts = async ({
   postType,
   minDate,
   categoryPrimary,
+  maxChunks,
 }) => {
   const [chunksDb, extractor, postsData, chunksData] = await Promise.all([
     getChunksDb(chunkSize),
@@ -121,6 +136,7 @@ export const searchPosts = async ({
     normalize: true,
   });
   const queryEmbedding = Array.from(queryExtracted.data);
+  queryExtracted.dispose?.(); // free up memory aggressively (especially for wasm).
   const embeddingTime = embeddingTimer.end();
 
   // Build where clause for filtering
@@ -211,6 +227,9 @@ export const searchPosts = async ({
         }
       : { min: 0, max: 0, avg: 0 };
 
+  const chunkLimit = Math.min(Math.max(maxChunks ?? MAX_CHUNKS, 1), MAX_CHUNKS);
+  const limitedChunks = chunksArray.slice(0, chunkLimit);
+
   return {
     metadata: {
       elapsed: {
@@ -218,11 +237,11 @@ export const searchPosts = async ({
         search: searchTime,
       },
       chunks: {
-        count: chunksArray.length,
+        count: limitedChunks.length,
         similarity: similarityStats,
       },
     },
     posts,
-    chunks: chunksArray,
+    chunks: limitedChunks,
   };
 };

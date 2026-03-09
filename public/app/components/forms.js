@@ -7,8 +7,8 @@ const CATEGORY_OPTIONS = CATEGORIES_LIST.map((category) => ({
   value: category,
 }));
 
-const POST_TYPE_OPTIONS = [
-  { label: "Services", value: "service" },
+export const POST_TYPE_OPTIONS = [
+  // { label: "Services", value: "service" },
   { label: "Work", value: "work" },
   { label: "Blogs", value: "blog" },
 ];

@@ -14,9 +14,10 @@
     "format": "npm run lint:fix && npm run pretty:fix"
   },
   "devDependencies": {
-    "eslint": "^9.39.2",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "llm-splitter": "^0.2.0",
-    "prettier": "^3.7.4"
+    "prettier": "^3.8.1"
   }
 }
