@@ -11,7 +11,11 @@ export const initIframeServer = () => {
   if (window === window.parent) return;
 
   const transport = new IframeChildTransport({
-    allowedOrigins: ["http://localhost:4610", "http://127.0.0.1:4610"],
+    allowedOrigins: [
+      "http://localhost:4610",
+      "http://127.0.0.1:4610",
+      "https://nearform.github.io",
+    ],
   });
 
   transport.onmessage = async (message) => {

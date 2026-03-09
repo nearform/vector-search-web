@@ -50,6 +50,7 @@ export const executeSearch = async (args) => {
   return {
     postCount: result.posts.length,
     posts: result.posts.map((p) => ({
+      slug: p.slug,
       title: p.title,
       href: p.href,
       date: p.date,
