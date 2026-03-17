@@ -49,6 +49,8 @@ export const initIframeServer = () => {
           });
           return;
         }
+        // Invoke with `modelContextTesting` to gut check tooling invocation.
+        // Could call directly if we wanted, but checks for future compliance.
         const result = await navigator.modelContextTesting.executeTool(
           tool.name,
           JSON.stringify(params.arguments),
