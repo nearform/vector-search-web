@@ -53,13 +53,13 @@ export const initIframeServer = () => {
         // Could call directly if we wanted, but checks for future compliance.
         const result = await navigator.modelContextTesting.executeTool(
           tool.name,
-          JSON.stringify(params.arguments),
+          JSON.stringify(params.arguments ?? {}),
         );
         const parsedResult = JSON.parse(result);
         transport.send({
           jsonrpc: "2.0",
           id,
-          result: { ...parsedResult, isError: false },
+          result: { isError: false, ...parsedResult },
         });
       } catch (err) {
         transport.send({
