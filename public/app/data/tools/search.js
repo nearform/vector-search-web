@@ -1,10 +1,10 @@
-import { searchPosts } from "./search.js";
-import { POST_TYPE_OPTIONS } from "../components/forms.js";
-import { CATEGORIES_LIST } from "../components/category.js";
+import { searchPosts } from "../search.js";
+import { POST_TYPE_OPTIONS } from "../../components/forms.js";
+import { CATEGORIES_LIST } from "../../components/category.js";
 
 const POST_TYPE_VALUES = POST_TYPE_OPTIONS.map((o) => o.value);
 
-export const TOOL_SCHEMA = {
+export const searchTool = {
   name: "search_nearform_knowledge",
   description:
     "Vector search across Nearform blog posts and case studies using semantic similarity. Returns matching posts with titles, URLs, dates, and similarity scores.",
@@ -36,33 +36,36 @@ export const TOOL_SCHEMA = {
     },
     required: ["query"],
   },
-};
-
-export const executeSearch = async (args) => {
-  const result = await searchPosts({
-    query: args.query,
-    postType: args.postType || [],
-    minDate: args.minDate || "",
-    categoryPrimary: args.categoryPrimary || [],
-    chunkSize: 256,
-    maxChunks: args.maxChunks,
-  });
-  return {
-    postCount: result.posts.length,
-    posts: result.posts.map((p) => ({
-      slug: p.slug,
-      title: p.title,
-      href: p.href,
-      date: p.date,
-      type: p.postType,
-      categories: p.categories,
-      similarity: p.similarityMax,
-    })),
-    chunks: result.chunks.map((c) => ({
-      slug: c.slug,
-      text: c.text,
-      similarity: c.similarity,
-    })),
-    metadata: result.metadata,
-  };
+  annotations: { readOnlyHint: true },
+  execute: async (args) => {
+    const result = await searchPosts({
+      query: args.query,
+      postType: args.postType || [],
+      minDate: args.minDate || "",
+      categoryPrimary: args.categoryPrimary || [],
+      chunkSize: 256,
+      maxChunks: args.maxChunks,
+    });
+    const payload = {
+      postCount: result.posts.length,
+      posts: result.posts.map((p) => ({
+        slug: p.slug,
+        title: p.title,
+        href: p.href,
+        date: p.date,
+        type: p.postType,
+        categories: p.categories,
+        similarity: p.similarityMax,
+      })),
+      chunks: result.chunks.map((c) => ({
+        slug: c.slug,
+        text: c.text,
+        similarity: c.similarity,
+      })),
+      metadata: result.metadata,
+    };
+    return {
+      content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
+    };
+  },
 };

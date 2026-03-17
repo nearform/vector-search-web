@@ -1,6 +1,6 @@
-/* global window:false, URLSearchParams:false */
+/* global window:false, navigator:false, URLSearchParams:false */
 import { IframeChildTransport } from "@mcp-b/transports";
-import { TOOL_SCHEMA, executeSearch } from "./tool-defs.js";
+import { TOOLS } from "./tools/index.js";
 
 const DEBUG = new URLSearchParams(window.location.search).has("debug");
 const log = (level, ...args) => {
@@ -23,23 +23,43 @@ export const initIframeServer = () => {
     if (jsonrpc !== "2.0" || id == null) return;
 
     if (method === "tools/list") {
-      transport.send({ jsonrpc: "2.0", id, result: { tools: [TOOL_SCHEMA] } });
+      const tools = TOOLS.map((tool) => {
+        const { execute, ...rest } = tool; // eslint-disable-line no-unused-vars
+        return rest;
+      });
+      transport.send({
+        jsonrpc: "2.0",
+        id,
+        result: { tools },
+      });
       return;
     }
 
     if (method === "tools/call") {
       try {
-        // MCP tools/call result must contain a `content` array and optional `isError` flag.
-        // See: https://modelcontextprotocol.io/specification/2025-06-18/server/tools
-        // Format: { content: [{ type: "text", text: "..." }], isError: false }
-        const payload = await executeSearch(params.arguments);
+        const tool = TOOLS.find((t) => t.name === params.name);
+        if (!tool) {
+          transport.send({
+            jsonrpc: "2.0",
+            id,
+            error: {
+              code: -32602,
+              message: `Unknown tool: ${params.name}`,
+            },
+          });
+          return;
+        }
+        // Invoke with `modelContextTesting` to gut check tooling invocation.
+        // Could call directly if we wanted, but checks for future compliance.
+        const result = await navigator.modelContextTesting.executeTool(
+          tool.name,
+          JSON.stringify(params.arguments ?? {}),
+        );
+        const parsedResult = JSON.parse(result);
         transport.send({
           jsonrpc: "2.0",
           id,
-          result: {
-            content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
-            isError: false,
-          },
+          result: { isError: false, ...parsedResult },
         });
       } catch (err) {
         transport.send({

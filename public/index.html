@@ -73,7 +73,7 @@
       import { initData } from "./app/data/index.js";
       import { initializeWebMCPPolyfill } from "@mcp-b/webmcp-polyfill";
 
-      initializeWebMCPPolyfill();
+      initializeWebMCPPolyfill({ installTestingShim: true });
 
       // Preload data and model in parallel (fire and forget)
       // These cache their results, so first search will be fast
