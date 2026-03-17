@@ -1,5 +1,5 @@
 /* global navigator:false */
-import { TOOL_SCHEMA, executeSearch } from "./tool-defs.js";
+import { TOOLS } from "./tools/index.js";
 
 const checkWebMcpSupport = () => {
   if ("modelContext" in navigator) return true;
@@ -26,14 +26,7 @@ const checkWebMcpSupport = () => {
 export const registerWebMcpTools = () => {
   if (!checkWebMcpSupport()) return;
 
-  navigator.modelContext.registerTool({
-    ...TOOL_SCHEMA,
-    annotations: { readOnlyHint: true },
-    execute: async (input) => {
-      const payload = await executeSearch(input);
-      return {
-        content: [{ type: "text", text: JSON.stringify(payload, null, 2) }],
-      };
-    },
-  });
+  for (const tool of TOOLS) {
+    navigator.modelContext.registerTool(tool);
+  }
 };
