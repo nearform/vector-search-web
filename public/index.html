@@ -66,14 +66,18 @@
       }
     </script>
     <script type="module">
+      import { initializeWebMCPPolyfill } from "@mcp-b/webmcp-polyfill";
+      import { registerWebMcpTools } from "./app/data/webmcp.js";
+
+      initializeWebMCPPolyfill({ installTestingShim: true });
+      registerWebMcpTools();
+    </script>
+    <script type="module">
       import { createRoot } from "react-dom/client";
       import { createElement } from "react";
       import htm from "htm";
       import { App } from "./app/index.js";
       import { initData } from "./app/data/index.js";
-      import { initializeWebMCPPolyfill } from "@mcp-b/webmcp-polyfill";
-
-      initializeWebMCPPolyfill({ installTestingShim: true });
 
       // Preload data and model in parallel (fire and forget)
       // These cache their results, so first search will be fast
@@ -82,10 +86,6 @@
       const html = htm.bind(createElement);
       const root = createRoot(document.getElementById("root"));
       root.render(html`<${App} />`);
-    </script>
-    <script type="module">
-      const { registerWebMcpTools } = await import("./app/data/webmcp.js");
-      registerWebMcpTools();
     </script>
     <script type="module">
       // If loaded inside an iframe, start the MCP iframe transport server
