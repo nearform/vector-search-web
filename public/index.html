@@ -71,9 +71,14 @@
 
       initializeWebMCPPolyfill({ installTestingShim: true });
       registerWebMcpTools();
+
+      // Load the local relay embed *after* the polyfill and tools are registered.
+      // Note: jsdelivr won't serve the embedded HTML as "text/html" so use another CDN instead.
+      const script = document.createElement("script");
+      script.src =
+        "https://unpkg.com/@mcp-b/webmcp-local-relay@2.2.0/dist/browser/embed.js";
+      document.body.appendChild(script);
     </script>
-    <!-- Note: jsdelivr won't serve the embedded HTML as "text/html" so use another CDN instead -->
-    <script src="https://unpkg.com/@mcp-b/webmcp-local-relay@2.2.0/dist/browser/embed.js"></script>
     <script type="module">
       import { createRoot } from "react-dom/client";
       import { createElement } from "react";
