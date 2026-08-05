@@ -36,6 +36,6 @@ export const registerWebMcpTools = async () => {
     const { warn } = console; // eslint-disable-line no-undef
     // Most likely the "tools" permissions policy: when this page is framed
     // cross-origin, the embedder must delegate it with `allow="tools"`.
-    warn(`WebMCP tool registration failed: ${err.message}`);
+    warn(`WebMCP tool registration failed: ${err?.message ?? String(err)}`);
   }
 };
