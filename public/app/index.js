@@ -109,16 +109,18 @@ export const App = () => {
         </form>
       </section>
 
-      ${error &&
-      html`
-        <div className="error-alert">
-          <i className="ph ph-warning-circle"></i>
-          <span>${error}</span>
-          <button className="error-dismiss" onClick=${() => setError(null)}>
-            <i className="ph ph-x"></i>
-          </button>
-        </div>
-      `}
+      ${
+        error &&
+        html`
+          <div className="error-alert">
+            <i className="ph ph-warning-circle"></i>
+            <span>${error}</span>
+            <button className="error-dismiss" onClick=${() => setError(null)}>
+              <i className="ph ph-x"></i>
+            </button>
+          </div>
+        `
+      }
 
       <${PostsTable} posts=${posts} searchData=${searchData} />
 

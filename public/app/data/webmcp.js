@@ -1,8 +1,11 @@
-/* global navigator:false */
+/* global navigator:false,document:false */
 import { TOOLS } from "./tools/index.js";
 
+const getModelContext = () => document.modelContext ?? navigator.modelContext;
+
 const checkWebMcpSupport = () => {
-  if ("modelContext" in navigator) return true;
+  const modelContext = getModelContext();
+  if (modelContext) return true;
 
   const { warn } = console; // eslint-disable-line no-undef
   const BLOG_URL = "https://developer.chrome.com/blog/webmcp-epp";
@@ -26,7 +29,8 @@ const checkWebMcpSupport = () => {
 export const registerWebMcpTools = () => {
   if (!checkWebMcpSupport()) return;
 
+  const modelContext = getModelContext();
   for (const tool of TOOLS) {
-    navigator.modelContext.registerTool(tool);
+    modelContext.registerTool(tool);
   }
 };
