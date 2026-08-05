@@ -26,11 +26,16 @@ const checkWebMcpSupport = () => {
   return false;
 };
 
-export const registerWebMcpTools = () => {
+export const registerWebMcpTools = async () => {
   if (!checkWebMcpSupport()) return;
 
   const modelContext = getModelContext();
-  for (const tool of TOOLS) {
-    modelContext.registerTool(tool);
+  try {
+    await Promise.all(TOOLS.map((tool) => modelContext.registerTool(tool)));
+  } catch (err) {
+    const { warn } = console; // eslint-disable-line no-undef
+    // Most likely the "tools" permissions policy: when this page is framed
+    // cross-origin, the embedder must delegate it with `allow="tools"`.
+    warn(`WebMCP tool registration failed: ${err.message}`);
   }
 };
