@@ -57,7 +57,7 @@ export const App = () => {
         <p className="intro">
           Client-side vector search powered by${" "}
           <a
-            href="https://docs.oramasearch.com/docs/orama-js"
+            href="https://docs.orama.com/docs/orama-js"
             target="_blank"
             rel="noopener noreferrer"
           >

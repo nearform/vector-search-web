@@ -1,6 +1,6 @@
 # Vector Web Search
 
-Client-side vector search powered by [Orama](https://docs.oramasearch.com/docs/orama-js) — search for [Nearform articles](https://nearform.com/insights/) entirely in the browser!
+Client-side vector search powered by [Orama](https://docs.orama.com/docs/orama-js) — search for [Nearform articles](https://nearform.com/insights/) entirely in the browser!
 
 ## Development
 
