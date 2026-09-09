@@ -85,6 +85,11 @@
       import htm from "htm";
       import { App } from "./app/index.js";
       import { initData } from "./app/data/index.js";
+      import { IS_PRESENT_MODE, PRESENT_TITLE } from "./app/util/present.js";
+
+      if (IS_PRESENT_MODE) {
+        document.title = PRESENT_TITLE;
+      }
 
       // Preload data and model in parallel (fire and forget)
       // These cache their results, so first search will be fast

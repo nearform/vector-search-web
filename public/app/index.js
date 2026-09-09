@@ -8,8 +8,11 @@ import {
   ChunkSizeSelect,
   SubmitButton,
 } from "./components/forms.js";
+import { Footer } from "./components/footer.js";
+import { Header } from "./components/header.js";
 import { PostsTable } from "./components/posts-table.js";
 import { searchPosts } from "./data/index.js";
+import { IS_PRESENT_MODE } from "./util/present.js";
 
 export const App = () => {
   const [searchData, setSearchData] = useState(null);
@@ -52,42 +55,7 @@ export const App = () => {
 
   return html`
     <div className="container">
-      <header className="header">
-        <h1>Vector Search Web Demo</h1>
-        <p className="intro">
-          Client-side vector search powered by${" "}
-          <a
-            href="https://docs.orama.com/docs/orama-js"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Orama</a
-          >${" "}— search for${" "}
-          <a
-            href="https://nearform.com/insights/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Nearform articles</a
-          >${" "} entirely in the browser! Read the${" "}
-          <a
-            href="https://nearform.com/digital-community/browser-based-vector-search-fast-private-and-no-backend-required/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            blog post</a
-          >.${" "}
-          <a
-            href="https://github.com/nearform/vector-search-web"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="intro-github-link"
-            aria-label="View on GitHub"
-          >
-            <i className="ph ph-github-logo"></i>
-          </a>
-        </p>
-      </header>
+      <${Header} />
 
       <section className="search-section">
         <h2>Search</h2>
@@ -124,19 +92,7 @@ export const App = () => {
 
       <${PostsTable} posts=${posts} searchData=${searchData} />
 
-      <footer className="footer">
-        <a
-          href="https://www.nearform.com/contact/?utm_source=open-source&utm_medium=banner&utm_campaign=os-project-pages"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img
-            src="https://raw.githubusercontent.com/nearform/.github/refs/heads/master/assets/os-banner-green.svg"
-            alt="Nearform Open Source"
-            className="nearform-banner"
-          />
-        </a>
-      </footer>
+      ${!IS_PRESENT_MODE && html`<${Footer} />`}
     </div>
   `;
 };
