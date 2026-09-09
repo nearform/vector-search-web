@@ -49,13 +49,17 @@ export const initIframeServer = () => {
           });
           return;
         }
-        // Invoke with `modelContextTesting` to gut check tooling invocation.
-        // Could call directly if we wanted, but checks for future compliance.
-        const result = await navigator.modelContextTesting.executeTool(
-          tool.name,
-          JSON.stringify(params.arguments ?? {}),
-        );
-        const parsedResult = JSON.parse(result);
+        // Prefer `modelContextTesting` to gut check tooling invocation, but it
+        // only exists when the WebMCP polyfill installs its shim. A native
+        // `navigator.modelContext` makes the polyfill defer and install
+        // nothing, so fall back to invoking the tool directly.
+        const testing = navigator.modelContextTesting;
+        const args = params.arguments ?? {};
+        const result = testing
+          ? await testing.executeTool(tool.name, JSON.stringify(args))
+          : await tool.execute(args);
+        const parsedResult =
+          typeof result === "string" ? JSON.parse(result) : result;
         transport.send({
           jsonrpc: "2.0",
           id,
