@@ -7,7 +7,7 @@ export const IS_PRESENT_MODE = new URLSearchParams(window.location.search).has(
   "present",
 );
 
-export const PRESENT_TITLE = "Content Search";
+export const PRESENT_TITLE = "Article Search";
 
 export const PRESENT_INTRO =
   "Vector similarity search over a library of articles.";
