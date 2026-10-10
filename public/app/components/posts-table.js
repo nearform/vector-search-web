@@ -1,6 +1,7 @@
 import { html } from "../util/html.js";
 import { Category } from "./category.js";
 import { JsonDataLink } from "./json-data-link.js";
+import { TimingsLink } from "./timings-link.js";
 import { useTableSort } from "../hooks/use-table-sort.js";
 
 const HEADINGS = {
@@ -22,6 +23,7 @@ export const PostsTable = ({ posts = [], searchData = null }) => {
       <div className="results-header">
         <h2>Results</h2>
         <span className="results-count">${posts.length} posts found</span>
+        <${TimingsLink} data=${searchData} />
         <${JsonDataLink} data=${searchData} />
       </div>
       <div className="table-container">

@@ -13,6 +13,18 @@ export const POST_TYPE_OPTIONS = [
   { label: "Blogs", value: "blog" },
 ];
 
+// Enter submits; Shift+Enter adds a newline. Skip while an IME is composing.
+const handleQueryKeyDown = (event) => {
+  if (
+    event.key === "Enter" &&
+    !event.shiftKey &&
+    !event.nativeEvent.isComposing
+  ) {
+    event.preventDefault();
+    event.currentTarget.form?.requestSubmit();
+  }
+};
+
 export const QueryField = ({ placeholder = "Search posts..." }) => html`
   <div className="form-field">
     <label htmlFor="query">Query</label>
@@ -21,6 +33,7 @@ export const QueryField = ({ placeholder = "Search posts..." }) => html`
       placeholder=${placeholder}
       className="query-input"
       rows="2"
+      onKeyDown=${handleQueryKeyDown}
     ></textarea>
   </div>
 `;
