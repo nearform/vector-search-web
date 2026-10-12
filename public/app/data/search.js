@@ -1,6 +1,6 @@
 /* global navigator:false */
 import { create, insertMultiple, search } from "@orama/orama";
-import { pipeline } from "@xenova/transformers";
+import { env, pipeline } from "@xenova/transformers";
 import { getChunk } from "llm-splitter";
 
 import { getAndCache, dequantizeEmbedding } from "./util.js";
@@ -14,6 +14,11 @@ import {
 const MAX_CHUNKS = 50;
 const MIN_SIMILARITY = 0.8;
 const EMBEDDING_MODEL = "Xenova/gte-small";
+
+// Load the model from the Hugging Face hub only. By default transformers.js
+// first looks for it under `/models/` on this site, which 404s (once per file)
+// before it falls back to the hub.
+env.allowLocalModels = false;
 
 const dateToNumber = (date) => Date.parse(date);
 
