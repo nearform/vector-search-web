@@ -1,4 +1,4 @@
-/* global window:false, navigator:false, URLSearchParams:false */
+/* global window:false, document:false, URLSearchParams:false */
 import { IframeChildTransport } from "@mcp-b/transports";
 import { TOOLS } from "./tools/index.js";
 import { areToolsRegistered } from "./webmcp.js";
@@ -50,18 +50,17 @@ export const initIframeServer = () => {
           });
           return;
         }
-        // Prefer `modelContextTesting` to gut check tooling invocation, but it
-        // only exists when the WebMCP polyfill installs its shim. A native
-        // `navigator.modelContext` makes the polyfill defer and install
-        // nothing, so fall back to invoking the tool directly. Same when the
-        // tools never registered (the polyfill refuses cross-origin frames),
-        // since executeTool would not find them.
-        const testing = areToolsRegistered()
-          ? navigator.modelContextTesting
+        // Prefer `executeTool` to gut check tooling invocation through WebMCP
+        // (native or polyfilled). When the tools never registered (the
+        // polyfill refuses cross-origin frames), fall back to invoking the
+        // tool directly, since `getTools` would not find them.
+        const { modelContext } = document;
+        const registeredTool = areToolsRegistered()
+          ? (await modelContext.getTools()).find((t) => t.name === tool.name)
           : null;
         const args = params.arguments ?? {};
-        const result = testing
-          ? await testing.executeTool(tool.name, JSON.stringify(args))
+        const result = registeredTool
+          ? await modelContext.executeTool(registeredTool, args)
           : await tool.execute(args);
         const parsedResult =
           typeof result === "string" ? JSON.parse(result) : result;

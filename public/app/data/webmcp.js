@@ -1,11 +1,8 @@
 /* global navigator:false,document:false */
 import { TOOLS } from "./tools/index.js";
 
-const getModelContext = () => document.modelContext ?? navigator.modelContext;
-
 const checkWebMcpSupport = () => {
-  const modelContext = getModelContext();
-  if (modelContext) return true;
+  if (document.modelContext) return true;
 
   const { warn } = console; // eslint-disable-line no-undef
   const BLOG_URL = "https://developer.chrome.com/blog/webmcp-epp";
@@ -34,7 +31,7 @@ export const areToolsRegistered = () => registered;
 export const registerWebMcpTools = async () => {
   if (!checkWebMcpSupport()) return;
 
-  const modelContext = getModelContext();
+  const { modelContext } = document;
   try {
     await Promise.all(TOOLS.map((tool) => modelContext.registerTool(tool)));
     registered = true;
