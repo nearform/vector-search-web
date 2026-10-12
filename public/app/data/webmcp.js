@@ -26,16 +26,24 @@ const checkWebMcpSupport = () => {
   return false;
 };
 
+let registered = false;
+
+/** Whether TOOLS are registered with WebMCP (native or polyfilled). */
+export const areToolsRegistered = () => registered;
+
 export const registerWebMcpTools = async () => {
   if (!checkWebMcpSupport()) return;
 
   const modelContext = getModelContext();
   try {
     await Promise.all(TOOLS.map((tool) => modelContext.registerTool(tool)));
+    registered = true;
   } catch (err) {
     const { warn } = console; // eslint-disable-line no-undef
-    // Most likely the "tools" permissions policy: when this page is framed
-    // cross-origin, the embedder must delegate it with `allow="tools"`.
+    // Most likely the "tools" permissions policy when this page is framed
+    // cross-origin. With native WebMCP, the embedder must delegate it with
+    // `allow="tools"`. Without native WebMCP the polyfill cannot check that
+    // delegation, so it refuses registration in cross-origin frames outright.
     warn(`WebMCP tool registration failed: ${err?.message ?? String(err)}`);
   }
 };

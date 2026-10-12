@@ -1,6 +1,7 @@
 /* global window:false, navigator:false, URLSearchParams:false */
 import { IframeChildTransport } from "@mcp-b/transports";
 import { TOOLS } from "./tools/index.js";
+import { areToolsRegistered } from "./webmcp.js";
 
 const DEBUG = new URLSearchParams(window.location.search).has("debug");
 const log = (level, ...args) => {
@@ -52,8 +53,12 @@ export const initIframeServer = () => {
         // Prefer `modelContextTesting` to gut check tooling invocation, but it
         // only exists when the WebMCP polyfill installs its shim. A native
         // `navigator.modelContext` makes the polyfill defer and install
-        // nothing, so fall back to invoking the tool directly.
-        const testing = navigator.modelContextTesting;
+        // nothing, so fall back to invoking the tool directly. Same when the
+        // tools never registered (the polyfill refuses cross-origin frames),
+        // since executeTool would not find them.
+        const testing = areToolsRegistered()
+          ? navigator.modelContextTesting
+          : null;
         const args = params.arguments ?? {};
         const result = testing
           ? await testing.executeTool(tool.name, JSON.stringify(args))
