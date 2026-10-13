@@ -1,7 +1,7 @@
 /* global window:false, document:false, URLSearchParams:false */
 import { IframeChildTransport } from "@mcp-b/transports";
 import { TOOLS } from "./tools/index.js";
-import { areToolsRegistered } from "./webmcp.js";
+import { areToolsRegistered, executeTool } from "./webmcp.js";
 
 const DEBUG = new URLSearchParams(window.location.search).has("debug");
 const log = (level, ...args) => {
@@ -60,7 +60,7 @@ export const initIframeServer = () => {
           : null;
         const args = params.arguments ?? {};
         const result = registeredTool
-          ? await modelContext.executeTool(registeredTool, args)
+          ? await executeTool(modelContext, registeredTool, args)
           : await tool.execute(args);
         const parsedResult =
           typeof result === "string" ? JSON.parse(result) : result;
