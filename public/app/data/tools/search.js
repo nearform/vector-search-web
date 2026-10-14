@@ -1,13 +1,16 @@
 import { searchPosts } from "../search.js";
 import { POST_TYPE_OPTIONS } from "../../components/forms.js";
 import { CATEGORIES_LIST } from "../../components/category.js";
+import { IS_PRESENT_MODE } from "../../util/present.js";
 
 const POST_TYPE_VALUES = POST_TYPE_OPTIONS.map((o) => o.value);
 
+// `?present` keeps the company name out of the tool schema shown on screen.
+const COMPANY = IS_PRESENT_MODE ? "the Company" : "Nearform";
+
 export const searchTool = {
-  name: "search_nearform_knowledge",
-  description:
-    "Vector search across Nearform blog posts and case studies using semantic similarity. Returns matching posts with titles, URLs, dates, and similarity scores.",
+  name: IS_PRESENT_MODE ? "search_knowledge" : "search_nearform_knowledge",
+  description: `Vector search across ${COMPANY} blog posts and case studies using semantic similarity. Returns matching posts with titles, URLs, dates, and similarity scores.`,
   inputSchema: {
     type: "object",
     properties: {
