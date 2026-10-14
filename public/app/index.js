@@ -11,6 +11,8 @@ import {
 import { Footer } from "./components/footer.js";
 import { Header } from "./components/header.js";
 import { PostsTable } from "./components/posts-table.js";
+import { ToolModal } from "./components/tool-modal.js";
+import { searchTool } from "./data/tools/search.js";
 import { searchPosts } from "./data/index.js";
 import { IS_PRESENT_MODE } from "./util/present.js";
 
@@ -23,6 +25,7 @@ export const App = () => {
   const [chunkSize, setChunkSize] = useState(256);
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState(null);
+  const [showToolModal, setShowToolModal] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -58,7 +61,18 @@ export const App = () => {
       <${Header} />
 
       <section className="search-section">
-        <h2>Search</h2>
+        <h2>
+          Search
+          <button
+            type="button"
+            className="tool-modal-open"
+            title=${`Call the ${searchTool.name} WebMCP tool`}
+            aria-label="Open WebMCP tool caller"
+            onClick=${() => setShowToolModal(true)}
+          >
+            <i className="ph ph-plugs-connected"></i>
+          </button>
+        </h2>
         <form className="search-form" onSubmit=${handleSubmit}>
           <${QueryField} />
           <div className="filters-row">
@@ -93,6 +107,13 @@ export const App = () => {
       <${PostsTable} posts=${posts} searchData=${searchData} />
 
       ${!IS_PRESENT_MODE && html`<${Footer} />`}
+      ${
+        showToolModal &&
+        html`<${ToolModal}
+          tool=${searchTool}
+          onClose=${() => setShowToolModal(false)}
+        />`
+      }
     </div>
   `;
 };
