@@ -1,11 +1,19 @@
+/* global window:false, URLSearchParams:false */
 import { useState } from "react";
 import { html } from "../util/html.js";
 
 const CONTACT_URL =
   "https://www.nearform.com/contact/?utm_source=open-source&utm_medium=banner&utm_campaign=os-project-pages";
 
+// `?banner=false` drops the footer banner entirely, for when the page is on a
+// shared screen (`npm run talk:open` in the talk repo opens it this way).
+const SHOW_BANNER =
+  new URLSearchParams(window.location.search).get("banner") !== "false";
+
 export const Footer = () => {
   const [minimized, setMinimized] = useState(false);
+
+  if (!SHOW_BANNER) return null;
 
   return html`
     <footer className="footer ${minimized ? "footer--minimized" : ""}">
