@@ -168,6 +168,36 @@ body {
     box-shadow 0.2s;
 }
 
+.query-wrapper {
+  position: relative;
+}
+
+.query-wrapper .query-input {
+  padding-right: 40px;
+}
+
+.query-clear {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: var(--color-text-muted);
+  cursor: pointer;
+}
+
+.query-clear:hover {
+  background: var(--color-bg);
+  color: var(--color-accent-dark);
+}
+
 .query-input:focus {
   outline: none;
   border-color: var(--color-accent);

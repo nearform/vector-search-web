@@ -26,6 +26,7 @@ export const App = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState(null);
   const [showToolModal, setShowToolModal] = useState(false);
+  const [hasQuery, setHasQuery] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -56,6 +57,18 @@ export const App = () => {
     }
   };
 
+  const handleClear = (event) => {
+    const query = event.currentTarget.form?.elements.query;
+    if (query) {
+      query.value = "";
+      query.focus();
+    }
+    setHasQuery(false);
+    setSearchData(null);
+    setPosts([]);
+    setError(null);
+  };
+
   return html`
     <div className="container">
       <${Header} />
@@ -74,7 +87,11 @@ export const App = () => {
           </button>
         </h2>
         <form className="search-form" onSubmit=${handleSubmit}>
-          <${QueryField} />
+          <${QueryField}
+            onInput=${(e) => setHasQuery(e.target.value.length > 0)}
+            onClear=${handleClear}
+            showClear=${!isFetching && (hasQuery || searchData || error)}
+          />
           <div className="filters-row">
             <${PostTypeSelect}
               selected=${selectedPostTypes}

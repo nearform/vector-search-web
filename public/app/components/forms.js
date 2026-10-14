@@ -25,16 +25,38 @@ const handleQueryKeyDown = (event) => {
   }
 };
 
-export const QueryField = ({ placeholder = "Search posts..." }) => html`
+export const QueryField = ({
+  placeholder = "Search posts...",
+  onInput,
+  onClear,
+  showClear,
+}) => html`
   <div className="form-field">
     <label htmlFor="query">Query</label>
-    <textarea
-      id="query"
-      placeholder=${placeholder}
-      className="query-input"
-      rows="2"
-      onKeyDown=${handleQueryKeyDown}
-    ></textarea>
+    <div className="query-wrapper">
+      <textarea
+        id="query"
+        placeholder=${placeholder}
+        className="query-input"
+        rows="2"
+        onKeyDown=${handleQueryKeyDown}
+        onInput=${onInput}
+      ></textarea>
+      ${
+        showClear &&
+        html`
+          <button
+            type="button"
+            className="query-clear"
+            title="Clear query and results"
+            aria-label="Clear query and results"
+            onClick=${onClear}
+          >
+            <i className="ph ph-x"></i>
+          </button>
+        `
+      }
+    </div>
   </div>
 `;
 
